@@ -1,5 +1,6 @@
 import { google } from "googleapis"
-import { TABLE_PREFIX, Table } from "./Table.js"
+import { Table } from "./Table.js"
+import { KeyValueStore } from "./KeyValueStore.js"
 
 
 /**
@@ -15,6 +16,9 @@ export class Database {
 
     /** @type {Table[]} */
     tables = []
+
+    /** @type {KeyValueStore[]} */
+    kvStores = []
 
     /**
      * Creates an instance of Database.
@@ -56,13 +60,18 @@ export class Database {
         await Promise.all(
             generalData.sheets.map((sheet) => {
                 // Tables
-                if (sheet.properties.title.startsWith(TABLE_PREFIX)) {
+                if (sheet.properties.title.startsWith(Table.PREFIX)) {
                     const table = new Table(this, sheet.properties.title)
                     this.tables.push(table)
                     return table.initialize()
                 }
 
-                // TODO: Key-value stores
+                // Key Value Stores
+                if (sheet.properties.title.startsWith(KeyValueStore.PREFIX)) {
+                    const store = new KeyValueStore(this, sheet.properties.title)
+                    this.kvStores.push(store)
+                    return store.initialize()
+                }
             })
         )
     }
@@ -76,6 +85,17 @@ export class Database {
      */
     getTable(name) {
         return this.tables.find((table) => table.name === name || table.displayName === name)
+    }
+
+    /**
+     * Get a key-value store by name.
+     *
+     * @param {string} name
+     * @return {KeyValueStore} 
+     * @memberof Database
+     */
+    getKeyValueStore(name) {
+        return this.kvStores.find((store) => store.name === name || store.displayName === name)
     }
 
     /**

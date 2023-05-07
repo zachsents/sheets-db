@@ -1,10 +1,11 @@
 import { QueryOperators } from "./QueryFilter.js"
 import { Row } from "./Row.js"
+import { Store } from "./Store.js"
 
 
-export const TABLE_PREFIX = "tbl_"
+export class Table extends Store {
 
-export class Table {
+    static PREFIX = "tbl_"
 
     /**
      * Creates an instance of Table.
@@ -13,12 +14,7 @@ export class Table {
      * @memberof Table
      */
     constructor(database, name) {
-        this.database = database
-
-        if (!name.startsWith(TABLE_PREFIX))
-            throw new Error(`Table name must start with ${TABLE_PREFIX}`)
-
-        this.name = name
+        super(database, name)
     }
 
     async initialize() {
@@ -42,41 +38,6 @@ export class Table {
             })
             this.fields = data.values[0]
         }
-    }
-
-    get displayName() {
-        return this.name.replace(TABLE_PREFIX, "")
-    }
-
-    /**
-     * Create a range string for this table.
-     *
-     * @param {string} range
-     * @return {string} 
-     * @memberof Table
-     */
-    createRange(...args) {
-        // case 1: ["A1:B2"]
-        if (args.length === 1 && typeof args[0] === "string")
-            return `'${this.name}'!${args[0]}`
-
-        // case 2: ["A", 1, "B", 2]
-        if (typeof args[0] === "string")
-            return `'${this.name}'!`
-                + (args[0] ?? "")
-                + (args[1] ?? "")
-                + (args[2] != null || args[3] != null ? ":" : "")
-                + (args[2] ?? "")
-                + (args[3] ?? "")
-
-        // case 3: [1, 1, 2, 2]
-        if (typeof args[0] === "number")
-            return `'${this.name}'!`
-                + (args[0] != null ? `R${args[0]}` : "")
-                + (args[1] != null ? `C${args[1]}` : "")
-                + (args[2] != null || args[3] != null ? ":" : "")
-                + (args[2] != null ? `R${args[2]}` : "")
-                + (args[3] != null ? `C${args[3]}` : "")
     }
 
 
@@ -189,20 +150,5 @@ export class Table {
 
         // return row object
         return new Row(this, parseInt(data.updates.updatedRange.match(/(?<=!.+)\d+/)[0]), validData)
-    }
-
-
-    /**
-     * Fetches the sheet ID of this table.
-     *
-     * @return {Promise<number>} 
-     * @memberof Table
-     */
-    async fetchSheetId() {
-        const { data } = await this.database.sheets.spreadsheets.get({
-            spreadsheetId: this.database.spreadsheetId,
-            includeGridData: false,
-        })
-        return data.sheets.find(sheet => sheet.properties.title === this.name).properties.sheetId
     }
 }
