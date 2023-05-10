@@ -74,7 +74,7 @@ export class Table extends Store {
 
         // format into object
         const fieldData = Object.fromEntries(
-            columnData.valueRanges.map((valueRange, i) => [searchFields[i], valueRange.values[0]])
+            columnData.valueRanges.map((valueRange, i) => [searchFields[i], valueRange.values?.[0] ?? []])
         )
 
         // test filters
