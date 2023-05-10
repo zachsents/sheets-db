@@ -1,5 +1,5 @@
 {
-    "name": "sheets-db",
+    "name": "@zachsents/sheets-db",
     "version": "1.0.0",
     "description": "Google Sheets as a database",
     "main": "index.js",
@@ -17,5 +17,9 @@
         "@types/jest": "^29.5.1",
         "jest": "^29.5.0",
         "nodemon": "^2.0.22"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/zachsents/sheets-db.git"
     }
 }
