@@ -111,7 +111,7 @@ export class Database {
     async createTable(displayName, {
         fields = [],
     } = {}) {
-        const name = `tbl:${displayName}`
+        const name = `${Table.PREFIX}${displayName}`
 
         // create sheet for table
         await this.sheets.spreadsheets.batchUpdate({

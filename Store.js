@@ -15,7 +15,7 @@ export class Store {
         this.database = database
 
         if (!name.startsWith(this.constructor.PREFIX))
-            throw new Error(`Table name must start with ${this.constructor.PREFIX}`)
+            throw new Error(`Store name "${name}" is invalid (must start with ${this.constructor.PREFIX})`)
 
         this.name = name
     }

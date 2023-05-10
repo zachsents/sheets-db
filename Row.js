@@ -8,8 +8,8 @@ export class Row {
      * @memberof Row
      */
     constructor(table, rowNumber, data) {
-        this[Symbol.for("table")] = table
-        this[Symbol.for("rowNumber")] = rowNumber
+        Object.defineProperty(this, Symbol.for("table"), { value: table })
+        Object.defineProperty(this, Symbol.for("rowNumber"), { value: rowNumber })
 
         Object.entries(data).forEach(([key, value]) => {
             this[key] = value
